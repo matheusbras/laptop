@@ -11,11 +11,12 @@ fancy_echo() {
   echo
 }
 
-if [[ ! `lsb_release -c` =~ precise|quantal|wheezy ]]
+if lsb_release -c | grep -qEv 'precise|quantal|wheezy'
 then
   fancy_echo "Sorry! we don't currently support that distro."
   exit;
 fi
+
 
 fancy_echo "Installing zsh ..."
   successfully sudo aptitude install -y zsh
