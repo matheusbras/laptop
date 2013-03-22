@@ -1,41 +1,54 @@
 #!/usr/bin/env zsh
+CLEAR="\033[0m"
+ORANGE="\033[33m"
 
 successfully() {
   $* || (echo "failed" 1>&2 && exit 1)
 }
 
-echo "Updating system packages ..."
-  successfully sudo apt-get update
-  successfully sudo apt-get -y upgrade
+fancy_echo() {
+  echo -e ${ORANGE}$1${CLEAR}
+  echo
+}
 
-echo "Installing xclip for clipboard integration with your terminal ..."
-  successfully sudo apt-get install -y xclip
+if lsb_release -c | grep -qEv 'precise|quantal|wheezy'
+then
+  fancy_echo "Sorry! we don't currently support that distro."
+  exit;
+fi
 
-echo "Installing git, for source control management ..."
-  successfully sudo apt-get install -y git
+fancy_echo "Updating system packages ..."
+  successfully sudo aptitude update
+  successfully sudo aptitude -y dist-upgrade
 
-echo "Checking for SSH key, generating one if it doesn't exist ..."
+fancy_echo "Installing xclip for clipboard integration with your terminal ..."
+  successfully sudo aptitude install -y xclip
+
+fancy_echo "Installing git, for source control management ..."
+  successfully sudo aptitude install -y git
+
+fancy_echo "Checking for SSH key, generating one if it doesn't exist ..."
   [[ -f ~/.ssh/id_rsa.pub ]] || ssh-keygen -t rsa
 
-echo "Copying public key to clipboard. Paste it into your Github account ..."
+fancy_echo "Copying public key to clipboard. Paste it into your Github account ..."
   [[ -f ~/.ssh/id_rsa.pub ]] && cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
   successfully x-www-browser https://github.com/account/ssh
 
-echo "Installing GNU Compiler Collection and dependencies ..."
-  successfully sudo apt-get install -y autoconf automake gcc
+fancy_echo "Installing ruby build dependencies ..."
+  successfully sudo aptitude build-dep -y ruby1.9.3
 
-echo "Installing system libraries recommended for Ruby ..."
-  successfully sudo apt-get install -y libgdbm3 libgdbm-dev libffi6 libffi-dev libksba8 libksba-dev libyaml-0-2 libyaml-dev
+fancy_echo "Installing encryption libraries recommended for Ruby ..."
+  successfully sudo aptitude install -y libksba8 libksba-dev 
 
-echo "Installing Postgres, a good open source relational database ..."
-  successfully sudo apt-get install -y postgresql postgresql-server-dev-all
+fancy_echo "Installing Postgres, a good open source relational database ..."
+  successfully sudo aptitude install -y postgresql postgresql-server-dev-all
 
-echo "Installing Redis, a good key-value database ..."
-  successfully sudo apt-get install -y redis-server
+fancy_echo "Installing Redis, a good key-value database ..."
+  successfully sudo aptitude install -y redis-server
 
-echo "Installing The Silver Searcher (better than ack or grep) for searching the contents of files ..."
+fancy_echo "Installing The Silver Searcher (better than ack or grep) for searching the contents of files ..."
   successfully git clone git://github.com/ggreer/the_silver_searcher.git /tmp/the_silver_searcher
-  successfully sudo apt-get install -y automake pkg-config libpcre3-dev zlib1g-dev
+  successfully sudo aptitude install -y automake pkg-config libpcre3-dev zlib1g-dev
   successfully sh /tmp/the_silver_searcher/build.sh
   successfully cd /tmp/the_silver_searcher
   successfully sh build.sh
@@ -43,55 +56,58 @@ echo "Installing The Silver Searcher (better than ack or grep) for searching the
   successfully cd ~
   successfully rm -rf /tmp/the_silver_searcher
 
-echo "Installing ctags, for indexing files for vim tab completion of methods, classes, variables ..."
-  successfully sudo apt-get install -y vim exuberant-ctags
+fancy_echo "Installing ctags, for indexing files for vim tab completion of methods, classes, variables ..."
+  successfully sudo aptitude install -y exuberant-ctags
 
-echo "Installing tmux, for saving project state and switching between projects ..."
-  successfully sudo apt-get install -y tmux
+fancy_echo "Installing vim ..."
+  successfully sudo aptitude install -y vim-gtk
 
-echo "Installing ImageMagick, for cropping and re-sizing images ..."
-  successfully sudo apt-get install -y imagemagick
+fancy_echo "Installing tmux, for saving project state and switching between projects ..."
+  successfully sudo aptitude install -y tmux
 
-echo "Installing QT, used by Capybara Webkit for headless Javascript integration testing ..."
-  successfully sudo apt-get install -y libqtwebkit-dev
+fancy_echo "Installing ImageMagick, for cropping and re-sizing images ..."
+  successfully sudo aptitude install -y imagemagick
 
-echo "Installing watch, used to execute a program periodically and show the output ..."
-  successfully sudo apt-get install -y watch
+fancy_echo "Installing QT, used by Capybara Webkit for headless Javascript integration testing ..."
+  successfully sudo aptitude install -y libqtwebkit-dev
 
-echo "Installing rbenv for changing Ruby versions ..."
+fancy_echo "Installing watch, used to execute a program periodically and show the output ..."
+  successfully sudo aptitude install -y watch
+
+fancy_echo "Installing rbenv for changing Ruby versions ..."
   successfully git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
   successfully echo "export SHELL=$(which zsh)" >> ~/.zshrc
   successfully echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
   successfully echo 'eval "$(rbenv init -)"' >> ~/.zshrc
   successfully source ~/.zshrc
 
-echo "Installing rbenv-gem-rehash so the shell automatically picks up binaries after installing gems with binaries..."
+fancy_echo "Installing rbenv-gem-rehash so the shell automatically picks up binaries after installing gems with binaries..."
   successfully git clone https://github.com/sstephenson/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
 
-echo "Installing ruby-build for installing Rubies ..."
+fancy_echo "Installing ruby-build for installing Rubies ..."
   successfully git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 
-echo "Installing Ruby 1.9.3-p392 ..."
+fancy_echo "Installing Ruby 1.9.3-p392 ..."
   successfully rbenv install 1.9.3-p392
 
-echo "Setting Ruby 1.9.3-p392 as global default Ruby ..."
+fancy_echo "Setting Ruby 1.9.3-p392 as global default Ruby ..."
   successfully rbenv global 1.9.3-p392
   successfully rbenv shell 1.9.3-p392
 
-echo "Update to latest Rubygems version ..."
+fancy_echo "Update to latest Rubygems version ..."
   successfully gem update --system
 
-echo "Installing critical Ruby gems for Rails development ..."
+fancy_echo "Installing critical Ruby gems for Rails development ..."
   successfully gem install bundler foreman pg rails thin --no-document
 
-echo "Installing GitHub CLI client ..."
+fancy_echo "Installing GitHub CLI client ..."
   successfully gem install hub --no-document
 
-echo "Installing Heroku CLI client ..."
+fancy_echo "Installing Heroku CLI client ..."
   successfully wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 
-echo "Installing the heroku-config plugin for pulling config variables locally to be used as ENV variables ..."
+fancy_echo "Installing the heroku-config plugin for pulling config variables locally to be used as ENV variables ..."
   successfully heroku plugins:install git://github.com/ddollar/heroku-config.git
 
-echo "Your shell will now restart in order for changes to apply."
+fancy_echo "Your shell will now restart in order for changes to apply."
   exec `which zsh` -l
