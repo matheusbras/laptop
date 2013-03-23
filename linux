@@ -34,11 +34,13 @@ fancy_echo "Copying public key to clipboard. Paste it into your Github account .
   [[ -f ~/.ssh/id_rsa.pub ]] && cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
   successfully x-www-browser https://github.com/account/ssh
 
-fancy_echo "Installing ruby build dependencies ..."
+fancy_echo "Installing base ruby build dependencies ..."
   successfully sudo aptitude build-dep -y ruby1.9.3
 
-fancy_echo "Installing encryption libraries recommended for Ruby ..."
-  successfully sudo aptitude install -y libksba8 libksba-dev 
+fancy_echo "Installing libraries for common gem dependencies ..."
+# libxslt1-dev for nokogiri, libcurl4-openssl-dev for passenger standalone,
+# libksba8 for encryption, libqtwebkit-dev for capybara-webkit
+  successfully sudo aptitude install -y libxslt1-dev libcurl4-openssl-dev libksba8 libksba-dev libqtwebkit-dev
 
 fancy_echo "Installing Postgres, a good open source relational database ..."
   successfully sudo aptitude install -y postgresql postgresql-server-dev-all
@@ -68,11 +70,8 @@ fancy_echo "Installing tmux, for saving project state and switching between proj
 fancy_echo "Installing ImageMagick, for cropping and re-sizing images ..."
   successfully sudo aptitude install -y imagemagick
 
-fancy_echo "Installing QT, used by Capybara Webkit for headless Javascript integration testing ..."
-  successfully sudo aptitude install -y libqtwebkit-dev
-
-fancy_echo "Installing watch, used to execute a program periodically and show the output ..."
-  successfully sudo aptitude install -y watch
+fancy_echo "Installing other useful development tools ..."
+  successfully sudo aptitude install -y watch htop mc strace siege traceroute
 
 fancy_echo "Installing rbenv for changing Ruby versions ..."
   successfully git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
