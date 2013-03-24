@@ -22,13 +22,13 @@ for Lion (OS X 10.7) or Mountain Lion (OS X 10.8).
 
 ### Linux
 
-Currently we support:
+We support:
 
 * The latest Ubuntu LTS release (currently [precise](https://wiki.ubuntu.com/PrecisePangolin/ReleaseNotes)),
 * The latest Ubuntu non-LTS release (currently [quantal](https://wiki.ubuntu.com/QuantalQuetzal/ReleaseNotes)), and
 * Debian testing (currently [wheezy](http://www.debian.org/releases/testing/)).
 
-1) Install zsh and set it as your login shell. To quickly do this, run the script:
+1) Install zsh and set it as your login shell. Run the script:
 
     bash <(curl -s https://raw.github.com/thoughtbot/laptop/master/linux-prerequisites)
 
@@ -56,7 +56,7 @@ What it sets up
 * Heroku Config plugin for local `ENV` variables
 * Heroku Toolbelt for interacting with the Heroku API
 * Hub gem for interacting with the GitHub API
-* Homebrew for managing operating system libraries
+* Homebrew for managing operating system libraries (OS X only)
 * ImageMagick for cropping and resizing images
 * Postgres for storing relational data
 * Postgres gem for talking to Postgres from Ruby
